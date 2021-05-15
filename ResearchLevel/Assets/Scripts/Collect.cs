@@ -32,6 +32,8 @@ public class Collect : MonoBehaviour
 	{
         mapType = Random.Range(0, 3);
 
+        /*
+        //research2
         if(mapType == 0)
 		{
             RenderSettings.skybox = space;
@@ -49,7 +51,7 @@ public class Collect : MonoBehaviour
 		{
             elementsToChange[4].SetActive(false);
             elementsToChange[1].SetActive(false);
-        }
+        }*/
 
     }
 
