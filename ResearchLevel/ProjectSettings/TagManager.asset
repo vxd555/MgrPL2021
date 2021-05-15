@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Barrel
   - Ship
+  - Door
   layers:
   - Default
   - TransparentFX
