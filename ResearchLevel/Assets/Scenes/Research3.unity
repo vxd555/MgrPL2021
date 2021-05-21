@@ -10659,6 +10659,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SF_Free-Fighter
       objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: f24986c5005449f4e96046f5edb103a7, type: 3}
+      propertyPath: m_TagString
+      value: Ship
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: f24986c5005449f4e96046f5edb103a7, type: 3}
       propertyPath: m_RootOrder
       value: 0
