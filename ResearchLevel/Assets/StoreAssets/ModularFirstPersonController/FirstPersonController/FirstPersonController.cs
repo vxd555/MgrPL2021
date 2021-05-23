@@ -56,6 +56,9 @@ public class FirstPersonController : MonoBehaviour
     // Internal Variables
     private bool isWalking = false;
 
+    public bool IsWalking { get { return isWalking; } }
+    public bool IsSprinting { get { return isSprinting; } }
+
     #region Sprint
 
     public bool enableSprint = true;
