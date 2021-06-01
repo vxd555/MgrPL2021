@@ -18,6 +18,8 @@ public class Collect : MonoBehaviour
     //ilość beczek i kolejność ich zbierania
     private int barrelAmount = 0;
     private List<int> barrelOrder = new List<int>();
+    [HideInInspector]
+    public List<int> roomOrder = new List<int>();
 
     private bool fly = false; //koniec gry
     private float timeFromStart = 0f; //licznik czasu gry
@@ -51,16 +53,20 @@ public class Collect : MonoBehaviour
 
         if(mapType == 0)
         {
-            RenderSettings.skybox = space;
+            elementsToChange[1].SetActive(false);
+            elementsToChange[2].SetActive(false);
 
         }
         else if(mapType == 1)
         {
             elementsToChange[0].SetActive(false);
+            elementsToChange[2].SetActive(false);
         }
         else
         {
+            elementsToChange[0].SetActive(false);
             elementsToChange[1].SetActive(false);
+            RenderSettings.skybox = space;
         }
 
         /*
@@ -135,15 +141,21 @@ public class Collect : MonoBehaviour
                             result += barrelOrder[i] + " ";
                         }
 
+                        string resultRoom = "";
+                        for(int i = 0; i < roomOrder.Count; ++i)
+                        {
+                            resultRoom += roomOrder[i] + " ";
+                        }
+
                         timeFromStart = Time.timeSinceLevelLoad;
 
                         if (timeFromStart % 60 >= 10)
                         {
-                            uiCollectText.text = $"Zapisz dane poniżej będą potrzebne do wypełnienia ankiety \n\n Mapa: {mapType + 1} \n\n Czas przejścia: {(int)(timeFromStart / 60)}:{(int)(timeFromStart % 60)}\n\n Kolejność: {result} \n\nKliknij Esc aby wyjść";
+                            uiCollectText.text = $"Zapisz dane poniżej będą potrzebne do wypełnienia ankiety \n\n Mapa: {mapType + 1} \n\n Czas przejścia: {(int)(timeFromStart / 60)}:{(int)(timeFromStart % 60)}\n\n Zebrane beczki: {result} \n\n Kolejność odwiedzania: {resultRoom} \n\nKliknij Esc aby wyjść";
                         }
                         else
                         {
-                            uiCollectText.text = $"Zapisz dane poniżej będą potrzebne do wypełnienia ankiety \n\n Mapa: {mapType + 1} \n\n Czas przejścia: {(int)(timeFromStart / 60)}:0{(int)(timeFromStart % 60)}\n\n Kolejność: {result} \n\nKliknij Esc aby wyjść";
+                            uiCollectText.text = $"Zapisz dane poniżej będą potrzebne do wypełnienia ankiety \n\n Mapa: {mapType + 1} \n\n Czas przejścia: {(int)(timeFromStart / 60)}:0{(int)(timeFromStart % 60)}\n\n Zebrane beczki: {result} \n\n Kolejność odwiedzania: {resultRoom} \n\nKliknij Esc aby wyjść";
 
                         }
                         uiCollect.SetActive(true);

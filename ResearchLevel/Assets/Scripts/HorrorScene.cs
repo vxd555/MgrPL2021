@@ -28,10 +28,10 @@ public class HorrorScene : MonoBehaviour
 	IEnumerator Fade()
 	{
 		yield return new WaitForSeconds(8f);
-		for(int c = 190; c > 0; c -= 3)
+		for(int c = 190; c > 28; c -= 3)
 		{
-			if(c < 0)
-				c = 0;
+			if(c < 28)
+				c = 28;
 
 			Color color = new Color(c / 255f, c / 255f, c / 255f, 1f);
 			RenderSettings.ambientLight = color;
