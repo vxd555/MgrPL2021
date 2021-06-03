@@ -8,6 +8,8 @@ TagManager:
   - Ship
   - Door
   - HandPad
+  - VendingMachine
+  - Wheel
   layers:
   - Default
   - TransparentFX

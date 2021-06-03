@@ -42,12 +42,31 @@ public class Collect : MonoBehaviour
     public AudioClip collectBarrel = null;
     public AudioClip handPadDoor = null;
     public AudioClip endSpeak = null;
+    public AudioClip creakingAudio = null;
     public float stepTimeSpan = 0.65f;
     public float stepSprintTimeSpan = 0.45f;
     private float timeToNextStep;
 
+    [Header("Interaction/Wheel")]
+    public ParticleSystemRenderer wheelSmoke = null;
+    public GameObject wheelBlock = null;
+    public Animator wheelAnim = null;
+    private int wheelLevel = 0;
+    private float wheelDealy = 0f;
 
-	private void Start()
+    [Header("Interaction/VendingMachine")]
+    public Animator vendingAnim = null;
+    private float vendingLiftingLevel = 0f;
+    private float vendingFallDealy = 0.05f;
+    private float vendingFallPower = 0.03f;
+    private float vendingLiftingPower = 0.15f;
+    public GameObject vendingDoor = null;
+    public BoxCollider vendingCollider = null;
+    public BoxCollider vendingLiftingCollider = null;
+
+
+
+    private void Start()
 	{
         mapType = Random.Range(0, 3);
 
@@ -108,11 +127,11 @@ public class Collect : MonoBehaviour
 
         if(Physics.BoxCast(direction.position, boxSize, direction.forward, out hit, transform.rotation, 2.5f))
 		{
-            if (hit.collider.tag == "Barrel")
+            if(hit.collider.tag == "Barrel")
             {
                 uiCollectText.text = "Wciśnij E aby zebrać";
                 uiCollect.SetActive(true);
-                if (Input.GetKeyDown(KeyCode.E))
+                if(Input.GetKeyDown(KeyCode.E))
                 {
                     barrelOrder.Add(hit.collider.GetComponent<Barrel>().index);
                     ++barrelAmount;
@@ -121,14 +140,14 @@ public class Collect : MonoBehaviour
                     audioSound.PlayOneShot(collectBarrel);
                 }
             }
-            else if (hit.collider.tag == "Ship")
+            else if(hit.collider.tag == "Ship")
             {
-                if (barrelAmount > 2)
+                if(barrelAmount > 2)
                 {
                     uiCollect.SetActive(true);
                     uiCollectText.text = "Wciśnij E aby odlecieć";
 
-                    if (Input.GetKeyDown(KeyCode.E))
+                    if(Input.GetKeyDown(KeyCode.E))
                     {
                         fpc.playerCanMove = false;
                         fpc.cameraCanMove = false;
@@ -136,7 +155,7 @@ public class Collect : MonoBehaviour
                         fpc.enabled = false;
 
                         string result = "";
-                        for (int i = 0; i < barrelOrder.Count; ++i)
+                        for(int i = 0; i < barrelOrder.Count; ++i)
                         {
                             result += barrelOrder[i] + " ";
                         }
@@ -149,7 +168,7 @@ public class Collect : MonoBehaviour
 
                         timeFromStart = Time.timeSinceLevelLoad;
 
-                        if (timeFromStart % 60 >= 10)
+                        if(timeFromStart % 60 >= 10)
                         {
                             uiCollectText.text = $"Zapisz dane poniżej będą potrzebne do wypełnienia ankiety \n\n Mapa: {mapType + 1} \n\n Czas przejścia: {(int)(timeFromStart / 60)}:{(int)(timeFromStart % 60)}\n\n Zebrane beczki: {result} \n\n Kolejność odwiedzania: {resultRoom} \n\nKliknij Esc aby wyjść";
                         }
@@ -166,7 +185,8 @@ public class Collect : MonoBehaviour
                         return;
                     }
                 }
-                else uiCollectText.text = "";
+                else
+                    uiCollectText.text = "";
             }
             else if(hit.collider.tag == "Door")
             {
@@ -176,11 +196,11 @@ public class Collect : MonoBehaviour
                 {
                     Animator anim = hit.collider.GetComponent<Animator>();
                     if(anim == null)
-					{
+                    {
                         anim = hit.collider.GetComponentInParent<Animator>();
-					}
+                    }
                     if(anim != null)
-					{
+                    {
                         anim.SetBool("character_nearby", !anim.GetBool("character_nearby"));
                         if(anim.GetBool("character_nearby"))
                             audioSound.PlayOneShot(openDoor);
@@ -199,13 +219,72 @@ public class Collect : MonoBehaviour
                     audioSound.PlayOneShot(handPadDoor);
                 }
             }
+            else if(hit.collider.tag == "Wheel" && wheelDealy <= 0f && wheelLevel < 3)
+            {
+                uiCollectText.text = "Wciśnij E aby przekręcić";
+                uiCollect.SetActive(true);
+                if(Input.GetKeyDown(KeyCode.E))
+                {
+                    wheelDealy = 0.7f;
+                    ++wheelLevel;
+                    wheelAnim.SetInteger("WheelUse", wheelLevel);
+                    if(wheelLevel == 1)
+                        wheelSmoke.maxParticleSize = 0.25f;
+                    else if(wheelLevel == 2)
+                        wheelSmoke.maxParticleSize = 0.1f;
+                    else if(wheelLevel >= 3)
+                    {
+                        wheelSmoke.maxParticleSize = 0f;
+                        wheelBlock.SetActive(false);
+                    }
+
+                    //audioSound.PlayOneShot(creakingAudio);
+                }
+            }
+            else if(hit.collider.tag == "VendingMachine" && vendingLiftingLevel < 0.98f)
+            {
+                uiCollectText.text = "Wciskaj E aby unieść";
+                uiCollect.SetActive(true);
+                if(Input.GetKeyDown(KeyCode.E))
+                {
+                    vendingLiftingLevel += vendingLiftingPower;
+                    if(vendingLiftingLevel > 1f)
+                        vendingLiftingLevel = 1f;
+
+                    if(vendingLiftingLevel > 0.98f)
+					{
+                        vendingDoor.tag = "Door";
+                        vendingCollider.enabled = true;
+                        vendingLiftingCollider.enabled = false;
+                    }
+
+                    vendingAnim.SetFloat("Blend", vendingLiftingLevel);
+                }
+            }
             else
             {
                 uiCollect.SetActive(false);
                 uiCollectText.text = "";
             }
+
         }
         else uiCollect.SetActive(false);
+
+        if(wheelDealy > 0f)
+            wheelDealy -= Time.deltaTime;
+
+        if(vendingFallDealy <= 0f && vendingLiftingLevel < 0.98f)
+		{
+            vendingLiftingLevel -= vendingFallPower;
+            if(vendingLiftingLevel < 0f)
+                vendingLiftingLevel = 0f;
+
+            vendingFallDealy = 0.05f;
+
+            vendingAnim.SetFloat("Blend", vendingLiftingLevel);
+        }
+        if(vendingFallDealy > 0f)
+            vendingFallDealy -= Time.deltaTime;
 
         if(fpc.IsWalking)
 		{
