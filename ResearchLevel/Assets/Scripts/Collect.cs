@@ -75,19 +75,16 @@ public class Collect : MonoBehaviour
 
         if(mapType == 0)
         {
-            elementsToChange[1].SetActive(false);
-            elementsToChange[2].SetActive(false);
+            elementsToChange[0].SetActive(true);
 
         }
         else if(mapType == 1)
         {
-            elementsToChange[0].SetActive(false);
-            elementsToChange[2].SetActive(false);
+            elementsToChange[1].SetActive(true);
         }
         else
         {
-            elementsToChange[0].SetActive(false);
-            elementsToChange[1].SetActive(false);
+            elementsToChange[2].SetActive(true);
             RenderSettings.skybox = space;
         }
 
