@@ -10,6 +10,7 @@ TagManager:
   - HandPad
   - VendingMachine
   - Wheel
+  - HandPadPuzzle
   layers:
   - Default
   - TransparentFX

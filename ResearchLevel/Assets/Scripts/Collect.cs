@@ -43,6 +43,9 @@ public class Collect : MonoBehaviour
     public AudioClip handPadDoor = null;
     public AudioClip endSpeak = null;
     public AudioClip creakingAudio = null;
+    public AudioClip beepAudio = null;
+    public AudioClip[] woodAudio = new AudioClip[6];
+    public AudioClip[] scaryAudio = new AudioClip[4];
     public float stepTimeSpan = 0.65f;
     public float stepSprintTimeSpan = 0.45f;
     private float timeToNextStep;
@@ -219,6 +222,16 @@ public class Collect : MonoBehaviour
                     audioSound.PlayOneShot(handPadDoor);
                 }
             }
+            else if(hit.collider.tag == "HandPadPuzzle")
+            {
+                uiCollectText.text = "Wciśnij E aby użyć";
+                uiCollect.SetActive(true);
+                if(Input.GetKeyDown(KeyCode.E))
+                {
+                    hit.collider.GetComponent<HandPadPuzzle>().Use();
+                    audioSound.PlayOneShot(beepAudio);
+                }
+            }
             else if(hit.collider.tag == "Wheel" && wheelDealy <= 0f && wheelLevel < 3)
             {
                 uiCollectText.text = "Wciśnij E aby przekręcić";
@@ -238,7 +251,7 @@ public class Collect : MonoBehaviour
                         wheelBlock.SetActive(false);
                     }
 
-                    //audioSound.PlayOneShot(creakingAudio);
+                    audioSound.PlayOneShot(creakingAudio);
                 }
             }
             else if(hit.collider.tag == "VendingMachine" && vendingLiftingLevel < 0.98f)
@@ -259,6 +272,7 @@ public class Collect : MonoBehaviour
                     }
 
                     vendingAnim.SetFloat("Blend", vendingLiftingLevel);
+                    audioSound.PlayOneShot(woodAudio[Random.Range(0, woodAudio.Length)]);
                 }
             }
             else

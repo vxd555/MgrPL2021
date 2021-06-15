@@ -7,7 +7,8 @@ public class ChangeMusic : MonoBehaviour
     public AudioSource audio = null;
     public AudioClip clip = null;
 
-	private bool isActive = false;
+	[HideInInspector]
+	public bool isActive = false;
 
 	public void OnTriggerEnter(Collider other)
 	{
